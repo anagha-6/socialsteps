@@ -1,14 +1,11 @@
-import 'dart:ui';
-
-import 'package:flutter/material.dart';
-import 'dart:async';
 import 'dart:math';
+import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-/* ---------------- APP ROOT ---------------- */
+/* ================= APP ROOT ================= */
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -17,12 +14,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(), // 👈 STARTS HERE
+      home: SplashScreen(),
     );
   }
 }
 
-/* ---------------- SPLASH SCREEN ---------------- */
+/* ================= SPLASH SCREEN ================= */
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -111,7 +108,9 @@ class _SplashScreenState extends State<SplashScreen>
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => const HomePage()),
+                  MaterialPageRoute(
+                    builder: (_) => const RoleSelectionScreen(),
+                  ),
                 );
               },
               child: const Text(
@@ -130,45 +129,37 @@ class _SplashScreenState extends State<SplashScreen>
   }
 }
 
-/* ---------------- HOME PAGE ---------------- */
+/* ================= ROLE SELECTION (HOME PAGE) ================= */
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class RoleSelectionScreen extends StatelessWidget {
+  const RoleSelectionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF4CC),
-      appBar: AppBar(title: const Text("Learning Modules",style: TextStyle(fontFamily: 'Aclonica-Regular',fontWeight: FontWeight.bold,fontSize: 22,),)),
+      backgroundColor: const Color(0xFFF6F4EF),
+      appBar: AppBar(
+        title: const Text("Who is using the app?"),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ElevatedButton(
-            child: const Text("Emotion Recognition",style: TextStyle(fontFamily: 'Aclonica-Regular',fontWeight: FontWeight.bold,),),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const EmotionScreen()),
-              );
-            },
+          roleCard(
+            context,
+            title: "Parent / Mentor",
+            subtitle: "Track progress and support learning",
+            icon: Icons.person,
+            screen: const ParentDashboard(),
           ),
           const SizedBox(height: 20),
-          ElevatedButton(
-             style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFC107),
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-              ),
-            child: const Text("Focus Training",style: TextStyle(fontFamily: 'Aclonica-Regular',fontWeight: FontWeight.bold,),),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const FocusScreen()),
-              );
-            },
+          roleCard(
+            context,
+            title: "Child",
+            subtitle: "Start learning and playing",
+            icon: Icons.child_care,
+            screen: const ChildDashboard(),
           ),
         ],
       ),
@@ -176,8 +167,198 @@ class HomePage extends StatelessWidget {
   }
 }
 
+Widget roleCard(BuildContext context,
+    {required String title,
+    required String subtitle,
+    required IconData icon,
+    required Widget screen}) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => screen),
+      );
+    },
+    child: Container(
+      margin: const EdgeInsets.symmetric(horizontal: 30),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 8),
+        ],
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 28,
+            backgroundColor: Colors.orange.shade100,
+            child: Icon(icon, size: 30, color: Colors.black54),
+          ),
+          const SizedBox(width: 20),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(subtitle, style: const TextStyle(color: Colors.grey)),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
-/* ---------------- EMOTION MODULE ---------------- */
+/* ================= CHILD DASHBOARD ================= */
+
+class ChildDashboard extends StatelessWidget {
+  const ChildDashboard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6F4EF),
+      appBar: AppBar(
+        title: const Text("Let's Learn Together!"),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            moduleCard(
+              context,
+              title: "Emotion Recognition",
+              icon: Icons.emoji_emotions,
+              screen: const EmotionScreen(),
+            ),
+            const SizedBox(height: 20),
+            moduleCard(
+              context,
+              title: "Focus Training",
+              icon: Icons.center_focus_strong,
+              screen: const FocusScreen(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Widget moduleCard(BuildContext context,
+    {required String title,
+    required IconData icon,
+    required Widget screen}) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => screen),
+      );
+    },
+    child: Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 8),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 36, color: Colors.orange),
+          const SizedBox(width: 20),
+          Text(title,
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    ),
+  );
+}
+
+/* ================= PARENT DASHBOARD ================= */
+
+class ParentDashboard extends StatelessWidget {
+  const ParentDashboard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6F4EF),
+      appBar: AppBar(
+        title: const Text("Parent Dashboard"),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: const [
+            ProgressTile(
+              title: "Emotion Training",
+              percent: 0.75,
+              color: Colors.blue,
+            ),
+            SizedBox(height: 20),
+            ProgressTile(
+              title: "Focus Training",
+              percent: 0.6,
+              color: Colors.orange,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ProgressTile extends StatelessWidget {
+  final String title;
+  final double percent;
+  final Color color;
+
+  const ProgressTile(
+      {super.key,
+      required this.title,
+      required this.percent,
+      required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style:
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          LinearProgressIndicator(
+            value: percent,
+            color: color,
+            backgroundColor: Colors.grey.shade300,
+          ),
+          const SizedBox(height: 6),
+          Text("${(percent * 100).toInt()}% completed"),
+        ],
+      ),
+    );
+  }
+}
+
+/* ================= EMOTION MODULE ================= */
 
 class EmotionScreen extends StatefulWidget {
   const EmotionScreen({super.key});
@@ -189,9 +370,6 @@ class EmotionScreen extends StatefulWidget {
 class _EmotionScreenState extends State<EmotionScreen> {
   String level = "easy";
   int imageIndex = 0;
-  String feedback = "";
-
-  /* ---------- IMAGE LIST ---------- */
 
   final Map<String, List<String>> emotionImages = {
     "easy": [
@@ -217,12 +395,9 @@ class _EmotionScreenState extends State<EmotionScreen> {
     "assets/emotions/easy/hpyeasy1.jpg": "Happy",
     "assets/emotions/easy/sadeasy1.jpg": "Sad",
     "assets/emotions/easy/angeasy1.jpg": "Angry",
-
     "assets/emotions/medium/hpymed1.jpg": "Happy",
     "assets/emotions/medium/sadmed1.jpg": "Sad",
     "assets/emotions/medium/anghard1.jpg": "Angry",
-
-
     "assets/emotions/hard/hpyhard1.jpg": "Happy",
     "assets/emotions/hard/sadhard1.jpg": "Sad",
     "assets/emotions/hard/anghard11.jpg": "Angry",
@@ -230,36 +405,32 @@ class _EmotionScreenState extends State<EmotionScreen> {
     "assets/emotions/hard/neutral.jpg": "Neutral",
   };
 
-  /* ---------- LOGIC ---------- */
-
   void checkAnswer(String selectedEmotion) {
     final currentImage = emotionImages[level]![imageIndex];
 
-    setState(() {
-      if (correctAnswers[currentImage] == selectedEmotion) {
-        feedback = "Correct ✅";
-        imageIndex++;
+    if (correctAnswers[currentImage] == selectedEmotion) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const RewardScreen(
+            message: "You identified the emotion correctly!",
+          ),
+        ),
+      );
 
+      setState(() {
+        imageIndex++;
         if (imageIndex >= emotionImages[level]!.length) {
           imageIndex = 0;
-
           if (level == "easy") {
             level = "medium";
-            feedback = "Easy Level Completed 🎉";
           } else if (level == "medium") {
             level = "hard";
-            feedback = "Medium Level Completed 🎉";
-          } else {
-            feedback = "All Levels Completed 🌟";
           }
         }
-      } else {
-        feedback = "Try Again ❌";
-      }
-    });
+      });
+    }
   }
-
-  /* ---------- UI ---------- */
 
   @override
   Widget build(BuildContext context) {
@@ -270,50 +441,36 @@ class _EmotionScreenState extends State<EmotionScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            "Level: ${level.toUpperCase()}",
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-
+          Text("Level: ${level.toUpperCase()}",
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
-
-          Image.asset(
-              currentImage,
-              width: 260,
-              height: 260,
-              fit: BoxFit.contain,
-            ),
-
+          Image.asset(currentImage, width: 240, height: 240),
           const SizedBox(height: 30),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              emotionButton("Happy", "😊"),
-              emotionButton("Sad", "😢"),
-              emotionButton("Angry", "😠"),
-              emotionButton("Surprised", "😲"),
+              emotionBtn("Happy", "😊"),
+              emotionBtn("Sad", "😢"),
+              emotionBtn("Angry", "😠"),
+              emotionBtn("Surprised", "😲"),
             ],
-          ),
-
-          const SizedBox(height: 25),
-
-          Text(
-            feedback,
-            style: const TextStyle(fontSize: 22),
           ),
         ],
       ),
     );
   }
 
-  Widget emotionButton(String emotion, String emoji) {
+  Widget emotionBtn(String emotion, String emoji) {
     return ElevatedButton(
       onPressed: () => checkAnswer(emotion),
       child: Text(emoji, style: const TextStyle(fontSize: 22)),
     );
   }
 }
+
+/* ================= FOCUS MODULE ================= */
+
 class FocusScreen extends StatefulWidget {
   const FocusScreen({super.key});
 
@@ -358,27 +515,18 @@ class _FocusScreenState extends State<FocusScreen> {
   }
 
   void generateObjects() {
-    // EASY
     if (level == "easy") {
       starsToShow = 1;
-    }
-
-    // MEDIUM
-    else if (level == "medium") {
+    } else if (level == "medium") {
       starsToShow = 1;
-    }
-
-    // HARD
-    else {
+    } else {
       starsToShow = round == 1 ? 1 : 2;
     }
 
-    // Generate stars
     for (int i = 0; i < starsToShow; i++) {
       starPositions.add(randomPosition());
     }
 
-    // Generate distractors ONLY for hard
     if (level == "hard") {
       for (int i = 0; i < 6; i++) {
         distractorPositions.add(randomPosition());
@@ -443,29 +591,27 @@ class _FocusScreenState extends State<FocusScreen> {
         children: [
           Center(
             child: Text(
-              "Level: ${level.toUpperCase()}  |  Round: $round",
+              "Level: ${level.toUpperCase()} | Round: $round",
               style: const TextStyle(fontSize: 18),
             ),
           ),
-
           if (showObjects) ...[
-            // Stars
             for (final pos in starPositions)
               Positioned(
                 left: pos.dx,
                 top: pos.dy,
                 child: GestureDetector(
                   onTap: onStarTap,
-                  child: const Icon(Icons.star, size: 40, color: Colors.amber),
+                  child: const Icon(Icons.star,
+                      size: 40, color: Colors.amber),
                 ),
               ),
-
-            // Distractors (hard only)
             for (final pos in distractorPositions)
               Positioned(
                 left: pos.dx,
                 top: pos.dy,
-                child: const Icon(Icons.circle, size: 30, color: Colors.grey),
+                child: const Icon(Icons.circle,
+                    size: 30, color: Colors.grey),
               ),
           ],
         ],
@@ -474,3 +620,40 @@ class _FocusScreenState extends State<FocusScreen> {
   }
 }
 
+/* ================= REWARD SCREEN ================= */
+
+class RewardScreen extends StatelessWidget {
+  final String message;
+
+  const RewardScreen({super.key, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6F4EF),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.emoji_events,
+                size: 120, color: Colors.amber),
+            const SizedBox(height: 20),
+            const Text(
+              "Great Job!",
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text(message,
+                style: const TextStyle(fontSize: 18, color: Colors.grey)),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Continue"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+  
